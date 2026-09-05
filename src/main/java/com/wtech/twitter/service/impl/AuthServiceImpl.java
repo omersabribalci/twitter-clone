@@ -1,6 +1,9 @@
 package com.wtech.twitter.service.impl;
 
-import com.wtech.twitter.dto.*;
+import com.wtech.twitter.dto.LoginRequest;
+import com.wtech.twitter.dto.LoginResponse;
+import com.wtech.twitter.dto.RegisterRequest;
+import com.wtech.twitter.dto.UserResponse;
 import com.wtech.twitter.dto.converter.UserDtoConverter;
 import com.wtech.twitter.entity.User;
 import com.wtech.twitter.exceptions.TwitterException;
@@ -20,17 +23,15 @@ public class AuthServiceImpl implements AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
-    private final UserDtoConverter userDtoConverter;
 
     public AuthServiceImpl(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder,
-                       AuthenticationManager authenticationManager,
-                       JwtUtil jwtUtil, UserDtoConverter userDtoConverter) {
+                           PasswordEncoder passwordEncoder,
+                           AuthenticationManager authenticationManager,
+                           JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
-        this.userDtoConverter = userDtoConverter;
     }
 
     public UserResponse register(RegisterRequest request) {
@@ -40,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
-        return userDtoConverter.convertToDto(user);
+        return UserDtoConverter.convertToDto(user);
 
     }
 
@@ -56,7 +57,7 @@ public class AuthServiceImpl implements AuthService {
                 .orElseThrow(() -> new TwitterException("User not found", HttpStatus.NOT_FOUND));
 
         String token = jwtUtil.generateToken(request.getUserName());
-        UserResponse userResponse = userDtoConverter.convertToDto(user);
+        UserResponse userResponse = UserDtoConverter.convertToDto(user);
         return new LoginResponse(token, userResponse);
     }
 }

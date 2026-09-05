@@ -10,8 +10,6 @@ import lombok.Setter;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 
-import java.util.List;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -23,16 +21,11 @@ import java.util.List;
 public class Tweet extends EntityBase {
     @Column(name = "content")
     @NotBlank(message = "Content cannot be empty!")
-    @Size(max = 280)
+    @Size(max = 280, message = "Max 280 char!")
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToMany(mappedBy = "tweet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Like> likes; // todo
-
-    @OneToMany(mappedBy = "tweet", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Comment> comments; // todo
 }

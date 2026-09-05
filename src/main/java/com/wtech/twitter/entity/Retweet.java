@@ -5,8 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.SQLRestriction;
+
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,8 +15,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Table(name = "retweets", schema = "public", uniqueConstraints = {
         @UniqueConstraint(columnNames = {"user_id", "tweet_id"}) // Bir tweet 1 kez retweetlenebilir
 })
-@SQLDelete(sql = "UPDATE retweets SET is_deleted = true WHERE id = ?") // silme önüne barikat
-@SQLRestriction("is_deleted = false") // filtreleme
+
 public class Retweet extends EntityBase {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

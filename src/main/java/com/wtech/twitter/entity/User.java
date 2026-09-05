@@ -46,6 +46,4 @@ public class User extends EntityBase {
     @Column(name = "photo")
     private String photo;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Tweet> tweets;
 }
