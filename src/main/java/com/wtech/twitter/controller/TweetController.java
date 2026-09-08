@@ -5,7 +5,6 @@ import com.wtech.twitter.dto.TweetRequest;
 import com.wtech.twitter.dto.TweetResponse;
 import com.wtech.twitter.dto.UserResponse;
 import com.wtech.twitter.entity.User;
-import com.wtech.twitter.repository.UserRepository;
 import com.wtech.twitter.service.TweetService;
 import com.wtech.twitter.service.UserService;
 import jakarta.validation.Valid;
@@ -51,6 +50,21 @@ public class TweetController {
         User user = userService.findUserEntityByUserName(userDetails.getUsername());
         TweetResponse tweetResponse = tweetService.save(tweetRequest, user);
         return ApiResponse.success("Tweet created successfully!", tweetResponse, HttpStatus.OK.value());
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse<TweetResponse> updateTweet(@PathVariable UUID id,
+                                                  @Valid @RequestBody TweetRequest tweetRequest,
+                                                  @AuthenticationPrincipal UserDetails userDetails) {
+        TweetResponse tweetResponse = tweetService.updateTweet(id, tweetRequest, userDetails.getUsername());
+        return ApiResponse.success("Tweet updated successfully!", tweetResponse, HttpStatus.OK.value());
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteTweet(@PathVariable UUID id,
+                                         @AuthenticationPrincipal UserDetails userDetails) {
+        tweetService.deleteTweet(id, userDetails.getUsername());
+        return ApiResponse.success("Tweet deleted successfully!", null, HttpStatus.OK.value());
     }
 
 }

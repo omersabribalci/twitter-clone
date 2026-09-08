@@ -7,6 +7,7 @@ import com.wtech.twitter.entity.Tweet;
 import com.wtech.twitter.entity.User;
 import com.wtech.twitter.exceptions.TwitterException;
 import com.wtech.twitter.repository.TweetRepository;
+import com.wtech.twitter.repository.UserRepository;
 import com.wtech.twitter.service.TweetService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,11 @@ import java.util.UUID;
 public class TweetServiceImpl implements TweetService {
 
     private final TweetRepository tweetRepository;
+    private final UserRepository userRepository;
 
-    public TweetServiceImpl(TweetRepository tweetRepository) {
+    public TweetServiceImpl(TweetRepository tweetRepository, UserRepository userRepository) {
         this.tweetRepository = tweetRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -44,6 +47,36 @@ public class TweetServiceImpl implements TweetService {
         Tweet savedTweet = tweetRepository.save(newTweet);
         return TweetDtoConverter.convertToDto(savedTweet);
     }
+
+    @Override
+    public TweetResponse updateTweet(UUID id, TweetRequest tweetRequest, String userName) {
+        Tweet tweet = findTweetOrThrow(id);
+
+        if (!tweet.getUser().getUserName().equals(userName)) {
+            throw new TwitterException("Not authorized!", HttpStatus.FORBIDDEN);
+        }
+
+        tweet.setContent(tweetRequest.getContent());
+        return TweetDtoConverter.convertToDto(tweetRepository.save(tweet));
+    }
+
+    @Override
+    public void deleteTweet(UUID id, String userName) {
+        Tweet tweet = findTweetOrThrow(id);
+
+        if (!tweet.getUser().getUserName().equals(userName)) {
+            throw new TwitterException("Not authorized!", HttpStatus.FORBIDDEN);
+        }
+
+        tweetRepository.delete(tweet);
+    }
+
+    private Tweet findTweetOrThrow(UUID id) {
+        return tweetRepository.findById(id).orElseThrow(
+                () -> new TwitterException("Tweet does not exist with this ID: " + id, HttpStatus.NOT_FOUND)
+        );
+    }
+
 
 
 }

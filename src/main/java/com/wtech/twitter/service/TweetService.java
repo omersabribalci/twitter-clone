@@ -12,4 +12,6 @@ public interface TweetService {
     TweetResponse findById(UUID id);
     List<TweetResponse> findAllByUserId(UUID userId);
     TweetResponse save(TweetRequest tweetRequest, User user);
+    TweetResponse updateTweet(UUID id, TweetRequest request, String userName);
+    void deleteTweet(UUID id, String userName);
 }
