@@ -2,6 +2,12 @@
 
 A RESTful API clone of Twitter (X) built with Spring Boot and PostgreSQL, featuring JWT-based authentication.
 
+## Project Status
+
+**Work in progress.** The project is currently focused on backend development, with ongoing improvements and refinements.
+
+A simple frontend is planned to let users interact with the API through a web interface.
+
 ---
 
 ## Tech Stack
